@@ -1,0 +1,8 @@
+App:
+  ServiceName: "go-service"
+  ENV: "local"
+Server:
+    Port: 3333
+Logger:
+  Level: "debug"
+  SentryDns: "localhost"

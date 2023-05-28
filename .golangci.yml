@@ -1,0 +1,24 @@
+linters:
+  enable:
+    - golint
+    - gofmt
+    - errcheck
+    - staticcheck
+    - gosec
+linters-settings:
+  golint:
+    min-confidence: 0
+    exclude-use-default: false
+  govet:
+    check-shadowing: true
+    settings:
+      printf:
+        funcs:
+          - (github.com/pkg/errors.Errorf
+          - (github.com/pkg/errors.Errorf
+issues:
+  exclude-rules:
+    - path: internal/app/api/...
+    - path: internal/app/server/resource.go
+      linters:
+        - golint
