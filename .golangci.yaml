@@ -19,6 +19,10 @@ linters-settings:
 issues:
   exclude-rules:
     - path: internal/app/api/...
-    - path: internal/app/server/resource.go
+      linters:
+        - golint
+
+    - path: internal/app/service/resource.go
+      text: "method .*Id should be .*ID"
       linters:
         - golint
