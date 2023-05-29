@@ -13,8 +13,9 @@ help:
 	@echo "This is a helper makefile for go-service"
 	@echo "Targets:"
 	@echo "    generate:    regenerate all generated files"
-	@echo "    init         download go dependencies"
+	@echo "    generate-clear:    regenerate all generated files and clear bin"
 	@echo "    lint         run linters"
+	@echo "    lint-clear   run linters and clear bin"
 
 .PHONY: init
 init:
