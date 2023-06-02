@@ -3,48 +3,32 @@ package config
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"os"
 )
 
-// Config ...
 type Config struct {
-	App struct {
-		Env         string
-		ServiceName string
-	}
-	Server struct {
-		Port string
-	}
-	Logger struct {
-		Level     string
-		SentryDsn string
-	}
+	*viper.Viper
 }
 
-// New creates new config
 func New() (*Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./internal/config")
+	pwd, _ := os.Getwd()
 
-	var config Config
-
-	if err := viper.ReadInConfig(); err != nil {
-		return nil, errors.Errorf("Error reading config file, %s", err)
-	}
-
-	err := viper.Unmarshal(&config)
+	v := viper.New()
+	v.SetConfigName("config")
+	v.AddConfigPath(pwd + "/internal/config")
+	v.SetConfigType("yaml")
+	err := v.ReadInConfig()
 	if err != nil {
-		return nil, errors.Errorf("unable to decode into struct, %v", err)
+		return nil, err
 	}
-	return &config, nil
-}
 
-// Watch config file for changes
-func (c *Config) Watch() {
-	viper.WatchConfig()
-	viper.OnConfigChange(func(e fsnotify.Event) {
+	v.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("Config file changed:", e.Name)
 	})
+	v.WatchConfig()
+
+	return &Config{
+		v,
+	}, nil
 }

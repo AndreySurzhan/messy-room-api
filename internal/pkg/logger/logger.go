@@ -25,12 +25,12 @@ func New(config *config.Config) *logrus.Logger {
 		TimestampFormat: timeFormat,
 	})
 
-	if config.Logger.Level == "DEBUG" {
+	if config.GetString("Runtime.Logger.Level") == "DEBUG" {
 		logger.SetLevel(logrus.DebugLevel)
 		logger.Debugln("Debug mode enabled")
 	}
 
-	if config.Logger.SentryDsn == "" {
+	if config.GetString("Runtime.Logger.SentryDsn") == "" {
 		return logger
 	}
 
@@ -46,12 +46,12 @@ func New(config *config.Config) *logrus.Logger {
 		logrus.TraceLevel,
 	}
 
-	hook, err := logrusSentry.NewWithTagsSentryHook(config.Logger.SentryDsn, tags, levels)
+	hook, err := logrusSentry.NewWithTagsSentryHook(config.GetString("Runtime.Logger.SentryDsn"), tags, levels)
 
 	if err == nil {
 		hook.Timeout = 5 * time.Second
 		hook.StacktraceConfiguration.Enable = true
-		hook.SetEnvironment(config.App.Env)
+		hook.SetEnvironment(config.GetString("env.environment"))
 
 		logger.Hooks.Add(hook)
 	}

@@ -11,6 +11,34 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Resource defines model for Resource.
+type Resource struct {
+	ID   *uint64 `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+// ResourceCreate defines model for ResourceCreate.
+type ResourceCreate struct {
+	Name *string `json:"name,omitempty"`
+}
+
+// ResourceUpdate defines model for ResourceUpdate.
+type ResourceUpdate struct {
+	Name *string `json:"name,omitempty"`
+}
+
+// GetResourceIDParams defines parameters for GetResourceID.
+type GetResourceIDParams struct {
+	Limit  *uint64 `form:"limit,omitempty" json:"limit,omitempty"`
+	Offset *uint64 `form:"offset,omitempty" json:"offset,omitempty"`
+}
+
+// PostResourceJSONRequestBody defines body for PostResource for application/json ContentType.
+type PostResourceJSONRequestBody = ResourceCreate
+
+// PutResourceIDJSONRequestBody defines body for PutResourceID for application/json ContentType.
+type PutResourceIDJSONRequestBody = ResourceUpdate
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
@@ -18,13 +46,13 @@ type ServerInterface interface {
 	PostResource(c *gin.Context)
 
 	// (DELETE /resource/{id})
-	DeleteResourceId(c *gin.Context, id uint64)
+	DeleteResourceID(c *gin.Context, id uint64)
 
 	// (GET /resource/{id})
-	GetResourceId(c *gin.Context, id uint64, params GetResourceIdParams)
+	GetResourceID(c *gin.Context, id uint64, params GetResourceIDParams)
 
 	// (PUT /resource/{id})
-	PutResourceId(c *gin.Context, id uint64)
+	PutResourceID(c *gin.Context, id uint64)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -46,8 +74,8 @@ func (siw *ServerInterfaceWrapper) PostResource(c *gin.Context) {
 	siw.Handler.PostResource(c)
 }
 
-// DeleteResourceId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteResourceId(c *gin.Context) {
+// DeleteResourceID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteResourceID(c *gin.Context) {
 
 	var err error
 
@@ -64,11 +92,11 @@ func (siw *ServerInterfaceWrapper) DeleteResourceId(c *gin.Context) {
 		middleware(c)
 	}
 
-	siw.Handler.DeleteResourceId(c, id)
+	siw.Handler.DeleteResourceID(c, id)
 }
 
-// GetResourceId operation middleware
-func (siw *ServerInterfaceWrapper) GetResourceId(c *gin.Context) {
+// GetResourceID operation middleware
+func (siw *ServerInterfaceWrapper) GetResourceID(c *gin.Context) {
 
 	var err error
 
@@ -82,7 +110,7 @@ func (siw *ServerInterfaceWrapper) GetResourceId(c *gin.Context) {
 	}
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params GetResourceIdParams
+	var params GetResourceIDParams
 
 	// ------------- Optional query parameter "limit" -------------
 
@@ -104,11 +132,11 @@ func (siw *ServerInterfaceWrapper) GetResourceId(c *gin.Context) {
 		middleware(c)
 	}
 
-	siw.Handler.GetResourceId(c, id, params)
+	siw.Handler.GetResourceID(c, id, params)
 }
 
-// PutResourceId operation middleware
-func (siw *ServerInterfaceWrapper) PutResourceId(c *gin.Context) {
+// PutResourceID operation middleware
+func (siw *ServerInterfaceWrapper) PutResourceID(c *gin.Context) {
 
 	var err error
 
@@ -125,7 +153,7 @@ func (siw *ServerInterfaceWrapper) PutResourceId(c *gin.Context) {
 		middleware(c)
 	}
 
-	siw.Handler.PutResourceId(c, id)
+	siw.Handler.PutResourceID(c, id)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -159,11 +187,11 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 
 	router.POST(options.BaseURL+"/resource", wrapper.PostResource)
 
-	router.DELETE(options.BaseURL+"/resource/:id", wrapper.DeleteResourceId)
+	router.DELETE(options.BaseURL+"/resource/:id", wrapper.DeleteResourceID)
 
-	router.GET(options.BaseURL+"/resource/:id", wrapper.GetResourceId)
+	router.GET(options.BaseURL+"/resource/:id", wrapper.GetResourceID)
 
-	router.PUT(options.BaseURL+"/resource/:id", wrapper.PutResourceId)
+	router.PUT(options.BaseURL+"/resource/:id", wrapper.PutResourceID)
 
 	return router
 }

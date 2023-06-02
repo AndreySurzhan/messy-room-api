@@ -7,6 +7,7 @@ OAPI_CODEGEN:=$(LOCAL_BIN)/oapi-codegen
 SPEC:=$(CURDIR)/api/api.yaml
 PACKAGE_NAME:=api
 GENERATED_PATH:=$(CURDIR)/internal/app/api
+GENERATED_API:=api.gen.go
 
 .PHONY: help
 help:
@@ -25,8 +26,8 @@ init:
 .PHONY: generate
 generate: $(OAPI_CODEGEN)
 	@echo "Generating code..."
-	@$(OAPI_CODEGEN) -generate gin -package $(PACKAGE_NAME) -o $(GENERATED_PATH)/api.gen.go $(SPEC)
-	@$(OAPI_CODEGEN) -generate types -package $(PACKAGE_NAME) -o $(GENERATED_PATH)/types.gen.go $(SPEC)
+	@$(OAPI_CODEGEN) -generate gin,types -package $(PACKAGE_NAME) -o $(GENERATED_PATH)/$(GENERATED_API) $(SPEC)
+	@sed -i '' 's/Id/ID/g' $(GENERATED_PATH)/$(GENERATED_API)
 	@$(OAPI_CODEGEN) -generate spec -package $(PACKAGE_NAME) -o $(GENERATED_PATH)/spec.gen.go $(SPEC)
 
 .PHONY: generate-clear

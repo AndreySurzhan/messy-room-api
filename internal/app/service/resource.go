@@ -11,17 +11,17 @@ func (i *Service) PostResource(c *gin.Context) {
 	_ = c.AbortWithError(500, errors.New("not implemented"))
 }
 
-// DeleteResourceId handler implementation
-func (i *Service) DeleteResourceId(c *gin.Context, id uint64) {
+// DeleteResourceID handler implementation
+func (i *Service) DeleteResourceID(c *gin.Context, id uint64) {
 	_ = c.AbortWithError(500, errors.New("not implemented"))
 }
 
-// GetResourceId handler implementation
-func (i *Service) GetResourceId(c *gin.Context, id uint64, params api.GetResourceIdParams) {
+// GetResourceID handler implementation
+func (i *Service) GetResourceID(c *gin.Context, id uint64, params api.GetResourceIDParams) {
 	_ = c.AbortWithError(500, errors.New("not implemented"))
 }
 
-// PutResourceId handler implementation
-func (i *Service) PutResourceId(c *gin.Context, id uint64) {
+// PutResourceID handler implementation
+func (i *Service) PutResourceID(c *gin.Context, id uint64) {
 	_ = c.AbortWithError(500, errors.New("not implemented"))
 }

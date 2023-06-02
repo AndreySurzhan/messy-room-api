@@ -77,7 +77,6 @@ func (a *App) Run() error {
 		return err
 	}
 
-	a.cfg.Watch()
 	a.prompts.Use(router)
 
 	router.Use(middleware.OapiRequestValidator(swagger))
@@ -86,7 +85,7 @@ func (a *App) Run() error {
 	router = registerCustomHandlers(router)
 	router = api.RegisterHandlers(router, a.impl)
 
-	err = router.Run(":" + a.cfg.Server.Port)
+	err = router.Run(":" + a.cfg.GetString("env.port"))
 	if err != nil {
 		return err
 	}
