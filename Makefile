@@ -13,10 +13,10 @@ GENERATED_API:=api.gen.go
 help:
 	@echo "This is a helper makefile for go-service"
 	@echo "Targets:"
-	@echo "    generate:    regenerate all generated files"
-	@echo "    generate-clear:    regenerate all generated files and clear bin"
-	@echo "    lint         run linters"
-	@echo "    lint-clear   run linters and clear bin"
+	@echo "    generate          regenerate all generated files"
+	@echo "    generate-clear    regenerate all generated files and clear bin"
+	@echo "    lint              run linters"
+	@echo "    lint-clear        run linters and clear bin"
 
 .PHONY: init
 init:
