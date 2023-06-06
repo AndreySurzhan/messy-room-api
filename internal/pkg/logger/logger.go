@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"gitlab.stripchat.dev/myclub/go-service/internal/config"
 	"math"
 	"net/http"
@@ -17,7 +18,7 @@ import (
 var timeFormat = "2006-01-02 15:04:05 -0700"
 
 // New ...
-func New(cfg *config.Config) *logrus.Logger {
+func New(cfg *viper.Viper) *logrus.Logger {
 	logger := logrus.New()
 	logger.SetReportCaller(true)
 	logger.SetLevel(logrus.TraceLevel)

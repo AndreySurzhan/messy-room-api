@@ -4,6 +4,7 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/gin-middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/zsais/go-gin-prometheus"
@@ -24,11 +25,11 @@ type App struct {
 	impl    *service.Service
 	logger  *logrus.Logger
 	prompts *ginprometheus.Prometheus
-	cfg     *config.Config
+	cfg     *viper.Viper
 }
 
 // New creates new app
-func New(cfg *config.Config) (*App, error) {
+func New(cfg *viper.Viper) (*App, error) {
 	a := &App{}
 
 	a.cfg = cfg

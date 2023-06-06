@@ -22,13 +22,8 @@ const (
 	configFileType = "yaml"
 )
 
-// Config ...
-type Config struct {
-	*viper.Viper
-}
-
 // New creates new config
-func New() (*Config, error) {
+func New() (*viper.Viper, error) {
 	v := viper.New()
 	v.SetConfigName(configFileName)
 	v.AddConfigPath(configPath)
@@ -37,13 +32,25 @@ func New() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	watchConfig(v)
 
+	setENV(v)
+
+	return v, nil
+}
+
+func watchConfig(v *viper.Viper) {
 	v.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("Config file changed:", e.Name)
 	})
 	v.WatchConfig()
+}
 
-	return &Config{
-		v,
-	}, nil
+func setENV(v *viper.Viper) {
+	v.AutomaticEnv()
+
+	v.SetEnvPrefix("ENV.")
+	v.MustBindEnv(ServiceName, "SERVICE_NAME")
+	v.MustBindEnv(Environment, "ENVIRONMENT")
+	v.MustBindEnv(Port, "PORT")
 }

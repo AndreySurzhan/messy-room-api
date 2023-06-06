@@ -1,5 +1,5 @@
 ENV:
-  SERVICE_NAME: "go-service"
+  SERVICE_NAME: "go_service"
   ENVIRONMENT: "local"
   PORT: 3333
 
