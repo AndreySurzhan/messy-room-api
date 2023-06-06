@@ -17,7 +17,7 @@ import (
 var timeFormat = "2006-01-02 15:04:05 -0700"
 
 // New ...
-func New(config *config.Config) *logrus.Logger {
+func New(cfg *config.Config) *logrus.Logger {
 	logger := logrus.New()
 	logger.SetReportCaller(true)
 	logger.SetLevel(logrus.TraceLevel)
@@ -25,12 +25,12 @@ func New(config *config.Config) *logrus.Logger {
 		TimestampFormat: timeFormat,
 	})
 
-	if config.GetString("Runtime.Logger.Level") == "DEBUG" {
+	if cfg.GetString(config.LoggerLevel) == "DEBUG" {
 		logger.SetLevel(logrus.DebugLevel)
 		logger.Debugln("Debug mode enabled")
 	}
 
-	if config.GetString("Runtime.Logger.SentryDsn") == "" {
+	if cfg.GetString(config.LoggerSentryDNS) == "" {
 		return logger
 	}
 
@@ -46,12 +46,12 @@ func New(config *config.Config) *logrus.Logger {
 		logrus.TraceLevel,
 	}
 
-	hook, err := logrusSentry.NewWithTagsSentryHook(config.GetString("Runtime.Logger.SentryDsn"), tags, levels)
+	hook, err := logrusSentry.NewWithTagsSentryHook(cfg.GetString(config.LoggerSentryDNS), tags, levels)
 
 	if err == nil {
 		hook.Timeout = 5 * time.Second
 		hook.StacktraceConfiguration.Enable = true
-		hook.SetEnvironment(config.GetString("env.environment"))
+		hook.SetEnvironment(cfg.GetString(config.Environment))
 
 		logger.Hooks.Add(hook)
 	}

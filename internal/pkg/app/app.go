@@ -4,13 +4,18 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/gin-middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/zsais/go-gin-prometheus"
 	"gitlab.stripchat.dev/myclub/go-service/internal/app/api"
 	"gitlab.stripchat.dev/myclub/go-service/internal/app/service"
 	"gitlab.stripchat.dev/myclub/go-service/internal/config"
 	"gitlab.stripchat.dev/myclub/go-service/internal/pkg/logger"
 	"gitlab.stripchat.dev/myclub/go-service/internal/pkg/prompts"
+	"os"
 )
+
+const apiFile = "/api/api.yaml"
 
 // App ...
 type App struct {
@@ -79,13 +84,14 @@ func (a *App) Run() error {
 
 	a.prompts.Use(router)
 
+	router = a.registerCustomHandlers(router)
+	router = a.registerSwagger(router)
+	router = api.RegisterHandlers(router, a.impl)
+
 	router.Use(middleware.OapiRequestValidator(swagger))
 	router.Use(logger.Logger(a.logger), gin.Recovery())
 
-	router = registerCustomHandlers(router)
-	router = api.RegisterHandlers(router, a.impl)
-
-	err = router.Run(":" + a.cfg.GetString("env.port"))
+	err = router.Run(":" + a.cfg.GetString(config.Port))
 	if err != nil {
 		return err
 	}
@@ -94,11 +100,23 @@ func (a *App) Run() error {
 }
 
 // registerCustomHandlers registers custom handlers
-func registerCustomHandlers(r *gin.Engine) *gin.Engine {
-	r.GET("/healthcheck", func(c *gin.Context) {
+func (a *App) registerCustomHandlers(router *gin.Engine) *gin.Engine {
+	router.GET("/healthcheck", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "OK",
 		})
 	})
-	return r
+
+	return router
+}
+
+func (a *App) registerSwagger(router *gin.Engine) *gin.Engine {
+	pwd, _ := os.Getwd()
+	router.StaticFile("/api", pwd+apiFile)
+
+	router.GET("/docs/*any", ginSwagger.WrapHandler(
+		swaggerFiles.NewHandler(), ginSwagger.URL(a.cfg.GetString(config.SwaggerURL)),
+	))
+
+	return router
 }

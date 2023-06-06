@@ -8,7 +8,7 @@ import (
 )
 
 func New(cfg *config.Config) *ginprometheus.Prometheus {
-	prompts := ginprometheus.NewPrometheus(strings.Replace(cfg.GetString("env.ServiceName"), "-", "_", -1))
+	prompts := ginprometheus.NewPrometheus(strings.Replace(cfg.GetString(config.ServiceName), "-", "_", -1))
 	prompts.ReqCntURLLabelMappingFn = func(c *gin.Context) string {
 		url := c.Request.URL.Path
 		for _, p := range c.Params {

@@ -53,4 +53,3 @@ lint: $(LINTER)
 
 .PHONY: lint-clear
 lint-clear: lint clear-bin
-

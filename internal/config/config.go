@@ -7,17 +7,36 @@ import (
 	"os"
 )
 
+// Config keys
+const (
+	ServiceName = "ENV.SERVICE_NAME"
+	Environment = "ENV.ENVIRONMENT"
+	Port        = "ENV.PORT"
+	SwaggerURL  = "ENV.SWAGGER_URL"
+
+	LoggerLevel     = "Runtime.Logger.Level"
+	LoggerSentryDNS = "Runtime.Logger.SentryDns"
+)
+
+const (
+	configPath     = "/internal/config"
+	configFileName = "config"
+	configFileType = "yaml"
+)
+
+// Config ...
 type Config struct {
 	*viper.Viper
 }
 
+// New creates new config
 func New() (*Config, error) {
 	pwd, _ := os.Getwd()
 
 	v := viper.New()
-	v.SetConfigName("config")
-	v.AddConfigPath(pwd + "/internal/config")
-	v.SetConfigType("yaml")
+	v.SetConfigName(configFileName)
+	v.AddConfigPath(pwd + configPath)
+	v.SetConfigType(configFileType)
 	err := v.ReadInConfig()
 	if err != nil {
 		return nil, err
