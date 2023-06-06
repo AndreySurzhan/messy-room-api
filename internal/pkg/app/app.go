@@ -12,10 +12,12 @@ import (
 	"gitlab.stripchat.dev/myclub/go-service/internal/config"
 	"gitlab.stripchat.dev/myclub/go-service/internal/pkg/logger"
 	"gitlab.stripchat.dev/myclub/go-service/internal/pkg/prompts"
-	"os"
 )
 
-const apiFile = "/api/api.yaml"
+const (
+	apiFile = "./api/api.yaml"
+	apiPath = "/docs"
+)
 
 // App ...
 type App struct {
@@ -111,11 +113,10 @@ func (a *App) registerCustomHandlers(router *gin.Engine) *gin.Engine {
 }
 
 func (a *App) registerSwagger(router *gin.Engine) *gin.Engine {
-	pwd, _ := os.Getwd()
-	router.StaticFile("/api", pwd+apiFile)
+	router.StaticFile(apiPath, apiFile)
 
-	router.GET("/docs/*any", ginSwagger.WrapHandler(
-		swaggerFiles.NewHandler(), ginSwagger.URL(a.cfg.GetString(config.SwaggerURL)),
+	router.GET(apiPath+"/*any", ginSwagger.WrapHandler(
+		swaggerFiles.NewHandler(), ginSwagger.URL(apiPath),
 	))
 
 	return router

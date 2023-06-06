@@ -2,9 +2,8 @@ ENV:
   SERVICE_NAME: "go-service"
   ENVIRONMENT: "local"
   PORT: 3333
-  SWAGGER_URL: "http://localhost:3333/api"
 
 Runtime:
   Logger:
-    Level: "info"
+    Level: "DEBUG"
     SentryDns: "localhost"
