@@ -4,7 +4,6 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/gin-middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/zsais/go-gin-prometheus"
@@ -25,11 +24,11 @@ type App struct {
 	impl    *service.Service
 	logger  *logrus.Logger
 	prompts *ginprometheus.Prometheus
-	cfg     *viper.Viper
+	cfg     *config.Config
 }
 
 // New creates new app
-func New(cfg *viper.Viper) (*App, error) {
+func New(cfg *config.Config) (*App, error) {
 	a := &App{}
 
 	a.cfg = cfg
@@ -87,8 +86,8 @@ func (a *App) Run() error {
 
 	a.prompts.Use(router)
 
-	router = a.registerCustomHandlers(router)
-	router = a.registerSwagger(router)
+	router = registerCustomHandlers(router)
+	router = registerSwagger(router)
 	router = api.RegisterHandlers(router, a.impl)
 
 	router.Use(middleware.OapiRequestValidator(swagger))
@@ -103,7 +102,7 @@ func (a *App) Run() error {
 }
 
 // registerCustomHandlers registers custom handlers
-func (a *App) registerCustomHandlers(router *gin.Engine) *gin.Engine {
+func registerCustomHandlers(router *gin.Engine) *gin.Engine {
 	router.GET("/healthcheck", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "OK",
@@ -113,7 +112,7 @@ func (a *App) registerCustomHandlers(router *gin.Engine) *gin.Engine {
 	return router
 }
 
-func (a *App) registerSwagger(router *gin.Engine) *gin.Engine {
+func registerSwagger(router *gin.Engine) *gin.Engine {
 	router.StaticFile(apiPath, apiFile)
 
 	router.GET(apiPath+"/*any", ginSwagger.WrapHandler(
