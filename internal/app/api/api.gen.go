@@ -19,12 +19,7 @@ type Resource struct {
 
 // ResourceCreate defines model for ResourceCreate.
 type ResourceCreate struct {
-	Name *string `json:"name,omitempty"`
-}
-
-// ResourceUpdate defines model for ResourceUpdate.
-type ResourceUpdate struct {
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 }
 
 // GetResourceIDParams defines parameters for GetResourceID.
@@ -37,7 +32,7 @@ type GetResourceIDParams struct {
 type PostResourceJSONRequestBody = ResourceCreate
 
 // PutResourceIDJSONRequestBody defines body for PutResourceID for application/json ContentType.
-type PutResourceIDJSONRequestBody = ResourceUpdate
+type PutResourceIDJSONRequestBody = ResourceCreate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {

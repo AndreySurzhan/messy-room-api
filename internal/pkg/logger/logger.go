@@ -16,9 +16,16 @@ import (
 // timeFormat is the format for timestamps
 var timeFormat = "2006-01-02 15:04:05 -0700"
 
+type Logger struct {
+	*logrus.Logger
+}
+
 // New ...
-func New(cfg *config.Config) *logrus.Logger {
-	logger := logrus.New()
+func New(cfg *config.Config) *Logger {
+	logger := &Logger{
+		logrus.New(),
+	}
+
 	logger.SetReportCaller(true)
 	logger.SetLevel(logrus.TraceLevel)
 	logger.SetFormatter(&logrus.JSONFormatter{
@@ -59,8 +66,8 @@ func New(cfg *config.Config) *logrus.Logger {
 	return logger
 }
 
-// Logger is the logrus logger handler
-func Logger(logger logrus.FieldLogger, notLogged ...string) gin.HandlerFunc {
+// Use is the logrus logger handler
+func (l *Logger) Use(engine *gin.Engine, notLogged ...string) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		hostname = "unknown"
@@ -76,7 +83,7 @@ func Logger(logger logrus.FieldLogger, notLogged ...string) gin.HandlerFunc {
 		}
 	}
 
-	return func(c *gin.Context) {
+	logFunc := func(c *gin.Context) {
 		// other handler can change c.Path so:
 		path := c.Request.URL.Path
 		start := time.Now()
@@ -96,7 +103,7 @@ func Logger(logger logrus.FieldLogger, notLogged ...string) gin.HandlerFunc {
 			return
 		}
 
-		entry := logger.WithFields(logrus.Fields{
+		entry := l.WithFields(logrus.Fields{
 			"hostname":   hostname,
 			"statusCode": statusCode,
 			"latency":    latency, // time to process
@@ -121,4 +128,6 @@ func Logger(logger logrus.FieldLogger, notLogged ...string) gin.HandlerFunc {
 			}
 		}
 	}
+
+	engine.Use(logFunc, gin.Recovery())
 }

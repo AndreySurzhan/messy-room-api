@@ -23,19 +23,22 @@ init:
 	@echo "Installing dependencies..."
 	@go mod download
 
-.PHONY: generate
-generate: $(OAPI_CODEGEN)
-	@echo "Generating code..."
-	@$(OAPI_CODEGEN) -generate gin,types -package $(PACKAGE_NAME) -o $(GENERATED_PATH)/$(GENERATED_API) $(SPEC)
-	@sed -i '' 's/Id/ID/g' $(GENERATED_PATH)/$(GENERATED_API)
-	@$(OAPI_CODEGEN) -generate spec -package $(PACKAGE_NAME) -o $(GENERATED_PATH)/spec.gen.go $(SPEC)
-
-.PHONY: generate-clear
-generate-clear: generate clear-bin
-
 $(OAPI_CODEGEN):
 	@echo "Installing oapi-codegen..."
 	@GOBIN=$(LOCAL_BIN) go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
+	@$(OAPI_CODEGEN) --version
+
+.PHONY: generate
+generate: $(OAPI_CODEGEN)
+	@echo "Generating code..."
+	@mkdir -p $(GENERATED_PATH)
+	@$(OAPI_CODEGEN) -generate gin,types -package $(PACKAGE_NAME) -o $(GENERATED_PATH)/$(GENERATED_API) $(SPEC)
+	@sed -i '' 's/Id/ID/g' $(GENERATED_PATH)/$(GENERATED_API)
+	@$(OAPI_CODEGEN) -generate spec -package $(PACKAGE_NAME) -o $(GENERATED_PATH)/spec.gen.go $(SPEC)
+	@echo "Done!"
+
+.PHONY: generate-clear
+generate-clear: generate clear-bin
 
 .PHONY: clear-bin
 clear-bin:
@@ -45,6 +48,7 @@ clear-bin:
 $(LINTER):
 	@echo "Installing golangci-lint..."
 	@curl sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(LOCAL_BIN) v$(LINTER_VERSION)
+	@$(LINTER) --version
 
 .PHONY: lint
 lint: $(LINTER)

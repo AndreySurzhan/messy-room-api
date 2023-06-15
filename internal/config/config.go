@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	_ "github.com/spf13/viper/remote"
 )
 
 // Config keys
@@ -29,33 +30,41 @@ type Config struct {
 
 // New creates new config
 func New() (*Config, error) {
-	v := viper.New()
-	v.SetConfigName(configFileName)
-	v.AddConfigPath(configPath)
-	v.SetConfigType(configFileType)
-	err := v.ReadInConfig()
-	if err != nil {
-		return nil, err
+	c := &Config{
+		viper.New(),
 	}
-	watchConfig(v)
 
-	setENV(v)
+	_ = c.readFileConfig()
 
-	return &Config{v}, nil
+	c.setENV()
+	c.watchConfig()
+	return c, nil
 }
 
-func watchConfig(v *viper.Viper) {
-	v.OnConfigChange(func(e fsnotify.Event) {
+func (c *Config) watchConfig() {
+	c.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("Config file changed:", e.Name)
 	})
-	v.WatchConfig()
+
+	c.WatchConfig()
 }
 
-func setENV(v *viper.Viper) {
-	v.AutomaticEnv()
+func (c *Config) setENV() {
+	c.SetEnvPrefix("ENV.")
+	c.MustBindEnv(ServiceName, "SERVICE_NAME")
+	c.MustBindEnv(Environment, "ENVIRONMENT")
+	c.MustBindEnv(Port, "PORT")
 
-	v.SetEnvPrefix("ENV.")
-	v.MustBindEnv(ServiceName, "SERVICE_NAME")
-	v.MustBindEnv(Environment, "ENVIRONMENT")
-	v.MustBindEnv(Port, "PORT")
+	c.AutomaticEnv()
+}
+
+func (c *Config) readFileConfig() error {
+	c.SetConfigType(configFileType)
+	c.SetConfigName(configFileName)
+	c.AddConfigPath(configPath)
+
+	if err := c.ReadInConfig(); err != nil {
+		return err
+	}
+	return nil
 }

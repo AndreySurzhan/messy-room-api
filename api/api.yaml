@@ -64,7 +64,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResourceUpdate'
+              $ref: '#/components/schemas/ResourceCreate'
       responses:
         '200':
           description: OK
@@ -105,8 +105,5 @@ components:
       properties:
         name:
           type: string
-    ResourceUpdate:
-      type: object
-      properties:
-        name:
-          type: string
+      required:
+        - name

@@ -3,7 +3,6 @@ package app
 import (
 	"github.com/deepmap/oapi-codegen/pkg/gin-middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/zsais/go-gin-prometheus"
@@ -22,7 +21,7 @@ const (
 // App ...
 type App struct {
 	impl    *service.Service
-	logger  *logrus.Logger
+	logger  *logger.Logger
 	prompts *ginprometheus.Prometheus
 	cfg     *config.Config
 }
@@ -57,8 +56,7 @@ func (a *App) initDeps() error {
 
 // initImpl initialize API impl
 func (a *App) initImpl() error {
-	resourceService := service.NewService()
-	a.impl = resourceService
+	a.impl = service.NewService()
 
 	return nil
 }
@@ -78,22 +76,22 @@ func (a *App) initPrompts() error {
 
 // Run runs the app
 func (a *App) Run() error {
-	router := gin.Default()
+	r := gin.Default()
 	swagger, err := api.GetSwagger()
 	if err != nil {
 		return err
 	}
 
-	a.prompts.Use(router)
+	a.prompts.Use(r)
+	a.logger.Use(r)
 
-	router = registerCustomHandlers(router)
-	router = registerSwagger(router)
-	router = api.RegisterHandlers(router, a.impl)
+	registerCustomHandlers(r)
+	registerSwagger(r)
+	api.RegisterHandlers(r, a.impl)
 
-	router.Use(middleware.OapiRequestValidator(swagger))
-	router.Use(logger.Logger(a.logger), gin.Recovery())
+	r.Use(middleware.OapiRequestValidator(swagger))
 
-	err = router.Run(":" + a.cfg.GetString(config.Port))
+	err = r.Run(":" + a.cfg.GetString(config.Port))
 	if err != nil {
 		return err
 	}
