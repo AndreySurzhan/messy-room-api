@@ -4,7 +4,6 @@ import (
 	"github.com/AndreySurzhan/messy-room-api/internal/app/service"
 	"github.com/AndreySurzhan/messy-room-api/internal/config"
 	"github.com/AndreySurzhan/messy-room-api/internal/pkg/logger"
-	"github.com/AndreySurzhan/messy-room-api/internal/pkg/prompts"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -17,10 +16,9 @@ const (
 
 // App ...
 type App struct {
-	impl    *service.Service
-	logger  *logger.Logger
-	prompts *ginprometheus.Prometheus
-	cfg     *config.Config
+	impl   *service.Service
+	logger *logger.Logger
+	cfg    *config.Config
 }
 
 // New creates new app
@@ -39,7 +37,6 @@ func (a *App) initDeps() error {
 	inits := []func() error{
 		a.initImpl,
 		a.initLogger,
-		a.initPrompts,
 	}
 
 	for _, fn := range inits {
@@ -65,12 +62,6 @@ func (a *App) initLogger() error {
 	return nil
 }
 
-func (a *App) initPrompts() error {
-	a.prompts = prompts.New(a.cfg)
-
-	return nil
-}
-
 // Run runs the app
 func (a *App) Run() error {
 	r := gin.Default()
@@ -79,7 +70,6 @@ func (a *App) Run() error {
 		return err
 	}
 
-	a.prompts.Use(r)
 	a.logger.Use(r)
 
 	registerCustomHandlers(r)

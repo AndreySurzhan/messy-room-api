@@ -32,7 +32,7 @@ func New(cfg *config.Config) *Logger {
 		TimestampFormat: timeFormat,
 	})
 
-	if cfg.GetString(config.LoggerLevel) == "DEBUG" {
+	if cfg.GetString(config.LogLevel) == "DEBUG" {
 		logger.SetLevel(logrus.DebugLevel)
 		logger.Debugln("Debug mode enabled")
 	}
