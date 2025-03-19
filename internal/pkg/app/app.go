@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/AndreySurzhan/messy-room-api/internal/app/api"
 	"github.com/AndreySurzhan/messy-room-api/internal/app/service"
 	"github.com/AndreySurzhan/messy-room-api/internal/config"
 	"github.com/AndreySurzhan/messy-room-api/internal/pkg/logger"
