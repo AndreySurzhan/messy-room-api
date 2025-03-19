@@ -1,10 +1,9 @@
 package config
 
 import (
-	"fmt"
-	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	_ "github.com/spf13/viper/remote"
+	"log"
 )
 
 // Config keys
@@ -20,38 +19,19 @@ type Config struct {
 }
 
 // New creates new config
-func New(configPath string) (*Config, error) {
+func New() (*Config, error) {
 	c := &Config{
 		viper.New(),
 	}
 
-	_ = c.readFileConfig(configPath)
+	c.SetConfigFile(".env")
 
-	c.setENV()
-	c.watchConfig()
-	return c, nil
-}
-
-func (c *Config) watchConfig() {
-	c.OnConfigChange(func(e fsnotify.Event) {
-		fmt.Println("Config file changed:", e.Name)
-	})
-
-	c.WatchConfig()
-}
-
-func (c *Config) setENV() {
-	c.MustBindEnv(Port, "PORT")
-	c.MustBindEnv(OpenAIAPIKey, "OPENAI_API_KEY")
+	// Read the .env file
+	if err := c.ReadInConfig(); err != nil {
+		log.Fatalf("Error reading .env file: %v", err)
+	}
 
 	c.AutomaticEnv()
-}
 
-func (c *Config) readFileConfig(configPath string) error {
-	c.SetConfigFile(configPath)
-
-	if err := c.ReadInConfig(); err != nil {
-		return err
-	}
-	return nil
+	return c, nil
 }
