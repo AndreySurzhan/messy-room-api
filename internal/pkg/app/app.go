@@ -1,16 +1,14 @@
 package app
 
 import (
-	"github.com/deepmap/oapi-codegen/pkg/gin-middleware"
+	"github.com/AndreySurzhan/messy-room-api/internal/app/api"
+	"github.com/AndreySurzhan/messy-room-api/internal/app/service"
+	"github.com/AndreySurzhan/messy-room-api/internal/config"
+	"github.com/AndreySurzhan/messy-room-api/internal/pkg/logger"
+	"github.com/AndreySurzhan/messy-room-api/internal/pkg/prompts"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/zsais/go-gin-prometheus"
-	"gitlab.stripchat.dev/myclub/go-service/internal/app/api"
-	"gitlab.stripchat.dev/myclub/go-service/internal/app/service"
-	"gitlab.stripchat.dev/myclub/go-service/internal/config"
-	"gitlab.stripchat.dev/myclub/go-service/internal/pkg/logger"
-	"gitlab.stripchat.dev/myclub/go-service/internal/pkg/prompts"
 )
 
 const (

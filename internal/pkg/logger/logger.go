@@ -2,8 +2,8 @@ package logger
 
 import (
 	"fmt"
+	"github.com/AndreySurzhan/messy-room-api/internal/config"
 	"github.com/gin-gonic/gin"
-	"gitlab.stripchat.dev/myclub/go-service/internal/config"
 	"math"
 	"net/http"
 	"os"

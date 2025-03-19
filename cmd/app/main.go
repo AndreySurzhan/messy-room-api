@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gitlab.stripchat.dev/myclub/go-service/internal/config"
-	"gitlab.stripchat.dev/myclub/go-service/internal/pkg/app"
+	"github.com/AndreySurzhan/messy-room-api/internal/config"
+	"github.com/AndreySurzhan/messy-room-api/internal/pkg/app"
 )
 
 func main() {

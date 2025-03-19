@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/AndreySurzhan/messy-room-api/internal/app/api"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
-	"gitlab.stripchat.dev/myclub/go-service/internal/app/api"
 )
 
 // PostResource handler implementation

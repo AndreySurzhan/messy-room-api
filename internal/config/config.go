@@ -2,69 +2,26 @@ package config
 
 import (
 	"fmt"
-	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	_ "github.com/spf13/viper/remote"
+	"strings"
 )
-
-// Config keys
-const (
-	ServiceName = "ENV.SERVICE_NAME"
-	Environment = "ENV.ENVIRONMENT"
-	Port        = "ENV.PORT"
-
-	LoggerLevel     = "Runtime.Logger.Level"
-	LoggerSentryDNS = "Runtime.Logger.SentryDns"
-)
-
-const (
-	configPath     = "."
-	configFileName = "config"
-	configFileType = "yaml"
-)
-
-// Config ...
-type Config struct {
-	*viper.Viper
-}
 
 // New creates new config
-func New() (*Config, error) {
-	c := &Config{
-		viper.New(),
+func New(configFile string) (*Config, error) {
+	viper.SetConfigFile(configFile)
+
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("Error reading config file, %s", err)
 	}
 
-	_ = c.readFileConfig()
-
-	c.setENV()
-	c.watchConfig()
-	return c, nil
-}
-
-func (c *Config) watchConfig() {
-	c.OnConfigChange(func(e fsnotify.Event) {
-		fmt.Println("Config file changed:", e.Name)
-	})
-
-	c.WatchConfig()
-}
-
-func (c *Config) setENV() {
-	c.SetEnvPrefix("ENV.")
-	c.MustBindEnv(ServiceName, "SERVICE_NAME")
-	c.MustBindEnv(Environment, "ENVIRONMENT")
-	c.MustBindEnv(Port, "PORT")
-
-	c.AutomaticEnv()
-}
-
-func (c *Config) readFileConfig() error {
-	c.SetConfigType(configFileType)
-	c.SetConfigName(configFileName)
-	c.AddConfigPath(configPath)
-
-	if err := c.ReadInConfig(); err != nil {
-		return err
+	var c Config
+	if err := viper.Unmarshal(&c); err != nil {
+		return nil, fmt.Errorf("Unable to decode into struct, %s", err)
 	}
-	return nil
+
+	return &c, nil
 }

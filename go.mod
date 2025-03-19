@@ -1,6 +1,6 @@
-module gitlab.stripchat.dev/myclub/go-service
+module github.com/AndreySurzhan/messy-room-api
 
-go 1.19
+go 1.24.1
 
 require (
 	github.com/deepmap/oapi-codegen v1.12.4

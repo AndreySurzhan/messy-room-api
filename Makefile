@@ -6,7 +6,7 @@ LINTER_VERSION:=1.52.2
 OAPI_CODEGEN:=$(LOCAL_BIN)/oapi-codegen
 SPEC:=$(CURDIR)/api/api.yaml
 PACKAGE_NAME:=api
-GENERATED_PATH:=$(CURDIR)/internal/app/api
+GENERATED_PATH:=$(CURDIR)/gen
 GENERATED_API:=api.gen.go
 
 .PHONY: help

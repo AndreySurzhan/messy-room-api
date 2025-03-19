@@ -1,9 +1,8 @@
 package prompts
 
 import (
+	"github.com/AndreySurzhan/messy-room-api/internal/config"
 	"github.com/gin-gonic/gin"
-	"github.com/zsais/go-gin-prometheus"
-	"gitlab.stripchat.dev/myclub/go-service/internal/config"
 	"strings"
 )
 

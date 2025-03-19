@@ -3,107 +3,40 @@ info:
   title: Resource API
   version: 1.0.0
 paths:
-  /resource:
+  /get-room-cleanliness-status:
     post:
+      summary: Upload a photo
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ResourceCreate'
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                description:
+                  type: string
       responses:
-        '201':
+        '200':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource'
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: string
+                  prompt:
+                    type: object
+                    properties:
+                      speech:
+                        type: string
+                        format: binary
+                      text:
+                        type: string
         '400':
           description: Bad Request
-
-  /resource/{id}:
-    get:
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: uint64
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: uint64
-        - name: offset
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: uint64
-      responses:
-        '200':
-          description: A list of resources
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Resource'
-    put:
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: uint64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResourceCreate'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resource'
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
-    delete:
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: uint64
-      responses:
-        '200':
-          description: OK
-        '404':
-          description: Not Found
-
-components:
-  schemas:
-    Resource:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: uint64
-        name:
-          type: string
-    ResourceCreate:
-      type: object
-      properties:
-        name:
-          type: string
-      required:
-        - name
