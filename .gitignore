@@ -35,4 +35,5 @@ go.sum
 
 gen/
 
+# env file
 .env
