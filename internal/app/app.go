@@ -1,9 +1,12 @@
 package app
 
 import (
-	"github.com/AndreySurzhan/messy-room-api/internal/app/service"
+	api "github.com/AndreySurzhan/messy-room-api/gen"
 	"github.com/AndreySurzhan/messy-room-api/internal/config"
+	"github.com/AndreySurzhan/messy-room-api/internal/controller"
 	"github.com/AndreySurzhan/messy-room-api/internal/pkg/logger"
+	"github.com/AndreySurzhan/messy-room-api/internal/service"
+	middleware "github.com/deepmap/oapi-codegen/pkg/gin-middleware"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -16,16 +19,17 @@ const (
 
 // App ...
 type App struct {
-	impl   *service.Service
-	logger *logger.Logger
-	cfg    *config.Config
+	service    *service.Service
+	controller *controller.Controller
+	logger     *logger.Logger
+	cfg        *config.Config
 }
 
 // New creates new app
 func New(cfg *config.Config) (*App, error) {
-	a := &App{}
-
-	a.cfg = cfg
+	a := &App{
+		cfg: cfg,
+	}
 
 	err := a.initDeps()
 
@@ -35,7 +39,8 @@ func New(cfg *config.Config) (*App, error) {
 // initDeps initialize dependencies
 func (a *App) initDeps() error {
 	inits := []func() error{
-		a.initImpl,
+		a.initService,
+		a.initController,
 		a.initLogger,
 	}
 
@@ -48,10 +53,18 @@ func (a *App) initDeps() error {
 	return nil
 }
 
-// initImpl initialize API impl
-func (a *App) initImpl() error {
-	a.impl = service.NewService()
+func (a *App) initService() error {
+	a.service = service.New()
 
+	return nil
+}
+
+// initImpl initialize API impl
+func (a *App) initController() error {
+	a.controller = controller.New(
+		a.service,
+		a.cfg,
+	)
 	return nil
 }
 
@@ -74,7 +87,7 @@ func (a *App) Run() error {
 
 	registerCustomHandlers(r)
 	registerSwagger(r)
-	api.RegisterHandlers(r, a.impl)
+	api.RegisterHandlers(r, a.controller)
 
 	r.Use(middleware.OapiRequestValidator(swagger))
 

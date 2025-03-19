@@ -9,7 +9,6 @@ import (
 	"os"
 	"time"
 
-	logrusSentry "github.com/evalphobia/logrus_sentry"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,35 +31,9 @@ func New(cfg *config.Config) *Logger {
 		TimestampFormat: timeFormat,
 	})
 
-	if cfg.GetString(config.LogLevel) == "DEBUG" {
+	if cfg.GetString(cfg.GetString(config.LoggerLevel)) == "DEBUG" {
 		logger.SetLevel(logrus.DebugLevel)
 		logger.Debugln("Debug mode enabled")
-	}
-
-	if cfg.GetString(config.LoggerSentryDNS) == "" {
-		return logger
-	}
-
-	tags := map[string]string{
-		"type": "go-service",
-	}
-
-	levels := []logrus.Level{
-		logrus.PanicLevel,
-		logrus.FatalLevel,
-		logrus.ErrorLevel,
-		logrus.WarnLevel,
-		logrus.TraceLevel,
-	}
-
-	hook, err := logrusSentry.NewWithTagsSentryHook(cfg.GetString(config.LoggerSentryDNS), tags, levels)
-
-	if err == nil {
-		hook.Timeout = 5 * time.Second
-		hook.StacktraceConfiguration.Enable = true
-		hook.SetEnvironment(cfg.GetString(config.Environment))
-
-		logger.Hooks.Add(hook)
 	}
 
 	return logger

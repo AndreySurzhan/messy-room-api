@@ -5,19 +5,19 @@ info:
 paths:
   /get-room-cleanliness-status:
     post:
-      summary: Upload a photo
+      summary: Upload a picture
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+                - picture
               properties:
-                file:
+                picture:
                   type: string
                   format: binary
-                description:
-                  type: string
       responses:
         '200':
           description: Created
